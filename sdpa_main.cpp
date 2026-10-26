@@ -483,6 +483,22 @@ int pinpal(char *dataFile, char *initFile, char *outFile, char *paraFile, bool i
     // explicit maxIteration
     // param.maxIteration = 2;
     while (phase.updateCheck(currentRes, solveInfo, param) && pIteration < param.maxIteration) {
+        // Diagnostic #167: in standard SDPA output convention, primal matrix
+        // feasibility internally is dual feasibility (the returned yMat).
+        // Leave all default trajectories unchanged. This is a stopping rule,
+        // not an infeasibility claim: the caller must check the returned
+        // functional against its original problem.
+        const char *stopDual = getenv("SDPA_STOP_DUAL_FEASIBLE");
+        if (stopDual != NULL && strcmp(stopDual, "1") == 0 &&
+#if REVERSE_PRIMAL_DUAL
+            currentRes.normPrimalVec <= param.epsilonDash
+#else
+            currentRes.normDualMat <= param.epsilonDash
+#endif
+        ) {
+            fprintf(fpOut, "lab167 stop = dual feasible (independent check required)\n");
+            break;
+        }
         // rMessage(" turn hajimari " << pIteration );
         // Mehrotra's Predictor
         TimeStart(MEHROTRA_PREDICTOR_START1);
