@@ -58,7 +58,12 @@ mpf_class Jal::getMinEigen(DenseLinearSpace &lMat, DenseLinearSpace &xMat, WorkV
 
     // for SDP
     for (int l = 0; l < xMat.SDP_nBlock; ++l) {
-        if (xMat.SDP_block[l].nRow > 20) { // use Lanczos method
+        // Diagnostic #167: reuse the existing full-precision QR path for
+        // every block, isolating the truncated Lanczos step estimate.
+        // Default behavior is unchanged; this is not a production policy.
+        const char *forceQR = getenv("SDPA_STEP_EIGEN_QR");
+        const bool useQR = forceQR != NULL && strcmp(forceQR, "1") == 0;
+        if (xMat.SDP_block[l].nRow > 20 && !useQR) { // use Lanczos method
             value = Lal::getMinEigen(lMat.SDP_block[l], xMat.SDP_block[l], work.DLS1.SDP_block[l], work.SDP_BV1.ele[l], work.SDP_BV2.ele[l], work.SDP_BV3.ele[l], work.SDP_BV4.ele[l], work.SDP_BV5.ele[l], work.SDP_BV6.ele[l], work.SDP_BV7.ele[l], work.SDP_BV8.ele[l], work.SDP_BV9.ele[l], work.SDP2_BV1.ele[l]);
         } else { // use QR method
             Lal::let(work.DLS2.SDP_block[l], '=', xMat.SDP_block[l], 'T', lMat.SDP_block[l]);
