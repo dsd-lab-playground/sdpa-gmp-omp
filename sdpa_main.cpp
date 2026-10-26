@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #define LengthOfBuffer 1024
 static double KAPPA = 1.2;
 
+/* MODIFIED from upstream (GPLv2 2a notice), 2026-10-26: opt-in dual-feasibility diagnostic stop for lab #167; default behavior unchanged. */
 #include <sdpa_io.h>
 
 #if UseMETIS
