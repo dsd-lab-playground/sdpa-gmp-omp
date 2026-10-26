@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 ------------------------------------------------------------- */
 
+/* MODIFIED from upstream (GPLv2 2a notice), 2026-10-26: opt-in full-QR step-eigenvalue diagnostic for lab #167; default branch unchanged. */
 #include <sdpa_jordan.h>
 #include <sdpa_dataset.h>
 
